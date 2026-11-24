@@ -116,8 +116,43 @@ function nuevaConversacion() {
 }
 $("#btn-nueva").addEventListener("click", nuevaConversacion);
 
+// Markdown mínimo (negritas, `código`, viñetas y párrafos) construido con nodos DOM y
+// textContent: el texto del modelo nunca se interpreta como HTML, así que no abre un XSS.
+function agregarEnLinea(padre, texto) {
+  const partes = texto.split(/(\*\*[^*]+\*\*|`[^`]+`)/g);
+  for (const parte of partes) {
+    if (!parte) continue;
+    if (parte.startsWith("**") && parte.endsWith("**")) padre.append(el("strong", "", parte.slice(2, -2)));
+    else if (parte.startsWith("`") && parte.endsWith("`")) padre.append(el("code", "", parte.slice(1, -1)));
+    else padre.append(document.createTextNode(parte));
+  }
+}
+
+function markdownSeguro(texto) {
+  const fragmento = document.createDocumentFragment();
+  let lista = null;
+  for (const linea of texto.split("\n")) {
+    const vineta = linea.match(/^\s*(?:[-*•]|\d+\.)\s+(.*)$/);
+    if (vineta) {
+      if (!lista) fragmento.append((lista = el("ul")));
+      const li = el("li");
+      agregarEnLinea(li, vineta[1]);
+      lista.append(li);
+      continue;
+    }
+    lista = null;
+    if (!linea.trim()) continue;
+    const p = el("p");
+    agregarEnLinea(p, linea.replace(/^#+\s*/, ""));
+    fragmento.append(p);
+  }
+  return fragmento;
+}
+
 function agregarMensaje(tipo, texto, meta) {
-  const burbuja = el("div", `burbuja burbuja--${tipo}`, texto);
+  const burbuja = el("div", `burbuja burbuja--${tipo}`);
+  if (tipo === "agente") burbuja.append(markdownSeguro(texto));
+  else burbuja.textContent = texto;
   if (meta) burbuja.append(el("div", "burbuja__meta", meta));
   $("#mensajes").append(burbuja);
   burbuja.scrollIntoView({ behavior: "smooth", block: "end" });
