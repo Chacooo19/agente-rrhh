@@ -1,0 +1,21 @@
+services:
+  agente-rrhh:
+    build: .
+    image: agente-rrhh:1.0.0
+    container_name: agente-rrhh
+    ports:
+      - "8000:8000"
+    env_file:
+      - path: .env
+        required: false  # sin .env la app arranca y la interfaz avisa que falta la API key
+    environment:
+      DB_PATH: /app/var/rrhh.db
+    # Permite usar Ollama instalado en la máquina anfitriona (LLM_MODEL=ollama_chat/...)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - datos-rrhh:/app/var  # usuarios y tickets persisten entre reinicios
+    restart: unless-stopped
+
+volumes:
+  datos-rrhh:
