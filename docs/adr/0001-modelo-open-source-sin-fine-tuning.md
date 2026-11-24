@@ -40,7 +40,9 @@ vLLM, llama.cpp, SGLang) y en Groq es el reemplazo recomendado tras el retiro de
 calidad (mismo código, otra variable).
 
 Parámetros: `temperature=0.2` (respuestas consistentes, poco creativas: es normativa) y
-`max_output_tokens=1500` (respuestas cortas; deja margen al razonamiento del modelo).
+`max_output_tokens=1024` y `reasoning_effort=low` (respuestas cortas; menos tokens de
+razonamiento). Ante un 429, LiteLLM reintenta con espera exponencial y después usa
+`gpt-oss-120b` como respaldo: en Groq los límites son por modelo.
 
 ## Consecuencias
 
@@ -52,5 +54,6 @@ Parámetros: `temperature=0.2` (respuestas consistentes, poco creativas: es norm
 - ⚠️ Un modelo de 20B se equivoca más que uno frontera al elegir tools. Se mitiga con un
   prompt de receta numerada, tools con docstrings claros, errores estructurados y cálculos
   deterministas en código.
-- ⚠️ La capa gratuita tiene límites de peticiones por minuto; la API devuelve un 503 con un
-  mensaje claro si se alcanzan.
+- ⚠️ La capa gratuita de Groq limita gpt-oss-20b a 8K tokens por minuto y 200K por día, lo
+  que alcanza para pocos turnos seguidos. Si aun con reintentos y respaldo se agota, la API
+  devuelve un 503 con un mensaje claro. Para uso continuo: plan Developer de Groq u Ollama.

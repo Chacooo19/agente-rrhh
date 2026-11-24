@@ -87,8 +87,10 @@ cp .env.example .env              # PowerShell: Copy-Item .env.example .env
 | `JWT_SECRET` | Recomendado | valor de desarrollo | Firma de tokens. `python -c "import secrets; print(secrets.token_urlsafe(32))"` |
 | `DEMO_PASSWORD` | No | `demo1234` | Contraseña de las cuentas ficticias |
 | `FECHA_REFERENCIA` | No | `2026-11-24` en la plantilla | Fecha para calcular antigüedad (vacía = hoy) |
-| `RAG_TOP_K` / `RAG_MIN_SCORE` | No | `5` / `0.35` | Fragmentos recuperados y umbral de "no sé" |
-| `LLM_TEMPERATURE` / `LLM_MAX_TOKENS` | No | `0.2` / `1500` | Parámetros del modelo |
+| `RAG_TOP_K` / `RAG_MIN_SCORE` | No | `3` / `0.35` | Fragmentos recuperados y umbral de "no sé" |
+| `LLM_TEMPERATURE` / `LLM_MAX_TOKENS` | No | `0.2` / `1024` | Parámetros del modelo |
+| `LLM_FALLBACK_MODEL` / `LLM_NUM_RETRIES` | No | `groq/openai/gpt-oss-120b` / `3` | Ante un 429, reintentos con espera y luego modelo de respaldo |
+| `LLM_REASONING_EFFORT` | No | `low` | Esfuerzo de razonamiento de gpt-oss (menos tokens y latencia) |
 
 `.env` está en `.gitignore` y `.dockerignore`: ningún secreto se versiona ni entra a la imagen.
 
@@ -204,6 +206,11 @@ Con `FECHA_REFERENCIA=2026-11-24`. Las cifras salen de `calcular_prestaciones`, 
 
 ## 5. Limitaciones conocidas y qué haría con más tiempo
 
+- **Capa gratuita de Groq:** gpt-oss-20b tiene 8,000 tokens por minuto y 200,000 por día
+  ([límites oficiales](https://console.groq.com/docs/rate-limits)), y un turno con tools usa
+  varias llamadas al modelo. Mitigación: fragmentos recortados, top-k=3, razonamiento
+  `low`, reintentos con espera y respaldo en gpt-oss-120b (sus límites son independientes).
+  Para uso continuo, el plan Developer de Groq (pago por uso) o Ollama local.
 - **Sesiones en memoria:** se pierden al reiniciar. Siguiente paso: `DatabaseSessionService`
   de ADK sobre Postgres.
 - **RAG denso simple:** con preguntas coloquiales puede traer un artículo vecino. Siguiente

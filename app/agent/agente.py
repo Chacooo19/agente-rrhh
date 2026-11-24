@@ -21,7 +21,12 @@ def cargar_prompt(ajustes: Settings, version: str = VERSION_PROMPT) -> str:
 
 def construir_agente(ajustes: Settings) -> Agent:
     """Un solo agente con 5 tools. Ver ADR-0003 para el porqué de no usar subagentes."""
-    modelo = LiteLlm(model=ajustes.llm_model)
+    extra: dict[str, object] = {"num_retries": ajustes.llm_num_retries}
+    if ajustes.llm_fallback_model and ajustes.llm_fallback_model != ajustes.llm_model:
+        extra["fallbacks"] = [ajustes.llm_fallback_model]
+    if ajustes.llm_reasoning_effort and "gpt-oss" in ajustes.llm_model:
+        extra["reasoning_effort"] = ajustes.llm_reasoning_effort
+    modelo = LiteLlm(model=ajustes.llm_model, **extra)
     return Agent(
         name=NOMBRE_AGENTE,
         model=modelo,

@@ -20,7 +20,13 @@ class Settings(BaseSettings):
     # Modelo de lenguaje
     llm_model: str = "groq/openai/gpt-oss-20b"
     llm_temperature: float = 0.2
-    llm_max_tokens: int = 1500
+    llm_max_tokens: int = 1024
+    # Si el modelo principal responde 429 (límite por minuto), LiteLLM reintenta con espera
+    # exponencial y luego prueba este modelo (en Groq los límites son por modelo).
+    llm_fallback_model: str = "groq/openai/gpt-oss-120b"
+    llm_num_retries: int = 3
+    # gpt-oss razona antes de responder; "low" gasta menos tokens y responde más rápido
+    llm_reasoning_effort: str = "low"
     groq_api_key: str = ""
     ollama_api_base: str = ""
 
@@ -31,7 +37,7 @@ class Settings(BaseSettings):
 
     # RAG
     embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-    rag_top_k: int = 5
+    rag_top_k: int = 3
     rag_min_score: float = 0.35
 
     # Rutas

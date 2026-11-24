@@ -26,7 +26,9 @@ Trabajo y el reglamento interno, y calcula sus prestaciones con sus propios dato
 | Proveedor | Groq vía LiteLLM (alternativa: Ollama local) | Latencia baja y capa gratuita; mismo modelo en local para privacidad (ADR-0001) |
 | Modelo | `openai/gpt-oss-20b` | Open-weight Apache 2.0, entrenado para uso agéntico y tool calling |
 | Temperatura | 0.2 | Respuestas consistentes sobre normativa; poca variación entre ejecuciones |
-| Máx. tokens de salida | 1500 | Las respuestas son breves; el margen cubre el razonamiento interno del modelo |
+| Máx. tokens de salida | 1024 | Las respuestas son breves; el margen cubre el razonamiento interno del modelo |
+| Razonamiento | `reasoning_effort=low` | Menos tokens y latencia; las cuentas difíciles las hace el código |
+| Reintentos / respaldo | 3 reintentos, luego `gpt-oss-120b` | Tolerar el límite de 8K tokens/min de la capa gratuita de Groq |
 | Framework | Google ADK 2.x (`LlmAgent`) | Tools, sesiones y eventos para la traza (ADR-0002) |
 
 ## Prompt
