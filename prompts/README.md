@@ -3,7 +3,8 @@
 | Archivo | Agente | Versión | Estado |
 |---|---|---|---|
 | `agente_rrhh.v1.md` | Alta (agente de RRHH) | 1 | Reemplazado |
-| `agente_rrhh.v2.md` | Alta (agente de RRHH) | 2 | En uso |
+| `agente_rrhh.v2.md` | Alta (agente de RRHH) | 2 | Reemplazado |
+| `agente_rrhh.v3.md` | Alta (agente de RRHH) | 3 | En uso |
 
 ### Cambios de v1 a v2
 
@@ -13,6 +14,15 @@ de usar el campo `monto_minimo_ley` que ya devolvía la tool. v2 agrega una regl
 todo número se copia de un resultado de tool, nunca se supone ni se recalcula, y para otro
 escenario se usan los campos de la tool o se vuelve a llamar. Además, la tool ahora devuelve
 `salario_diario` y `dias_minimo_ley` de forma explícita.
+
+### Cambios de v2 a v3
+
+Con v2 y `gpt-oss-120b`, ante "¿cuánto me toca de aguinaldo este año?" el modelo buscó en la
+normativa, no llamó `calcular_prestaciones` y respondió "no encuentro información" (la regla
+de v1/v2 decía "primero normativa; si no hay fundamento, di que no sabes"). v3 enruta por
+tipo de pregunta: las de "cuánto me toca" van directo a `calcular_prestaciones`, cuyo
+resultado ya incluye el fundamento legal; `buscar_normativa` queda para reglas generales, y
+"no sé" solo aplica cuando **ninguna** tool responde.
 
 Para cambiar el prompt se crea un archivo nuevo (`agente_rrhh.v2.md`) y se apunta a él en
 `app/agent/agente.py` (`VERSION_PROMPT`), así la versión queda en el historial y en la traza
