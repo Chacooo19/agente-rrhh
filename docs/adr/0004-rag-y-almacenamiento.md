@@ -50,7 +50,10 @@ tickets. Todo debe levantarse con `docker compose up` sin servicios adicionales.
 `python -m scripts.evaluar_rag` mide sobre 19 preguntas etiquetadas
 (`evals/preguntas_rag.jsonl`): hit@k, MRR y tasa de rechazo de preguntas fuera de alcance.
 Con esto se calibra `RAG_MIN_SCORE`: subirlo mejora el rechazo pero puede perder respuestas.
-Los resultados medidos se reportan en el README.
+Resultado medido con el modelo real (k=3, umbral 0.35): **hit@3 = 0.82 (14/17), MRR = 0.79,
+rechazo fuera de alcance = 2/3**. Los fallos (mención de "artículo 76", "bono", "justifico")
+muestran el límite de un embedding pequeño solo con señal densa y orientan el siguiente paso:
+búsqueda híbrida sobre todo el índice.
 
 ## Consecuencias
 
