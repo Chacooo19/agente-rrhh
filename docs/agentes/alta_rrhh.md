@@ -33,8 +33,8 @@ Trabajo y el reglamento interno, y calcula sus prestaciones con sus propios dato
 
 ## Prompt
 
-- Archivo: [`prompts/agente_rrhh.v2.md`](../../prompts/agente_rrhh.v2.md) (v1 se conserva para comparar)
-- Versión: **v2** (`VERSION_PROMPT = "agente_rrhh.v2"` en `app/agent/agente.py`; viaja en la
+- Archivo: [`prompts/agente_rrhh.v3.md`](../../prompts/agente_rrhh.v3.md) (v1 y v2 se conservan para comparar)
+- Versión: **v3** (`VERSION_PROMPT = "agente_rrhh.v3"` en `app/agent/agente.py`; viaja en la
   traza y en los logs de cada turno).
 - Notas de diseño y cómo se prueba: [`prompts/README.md`](../../prompts/README.md)
 
@@ -68,11 +68,13 @@ de lanzar excepciones, para que el modelo pueda explicarlo al usuario.
 
 1. El backend valida el JWT y crea o recupera la sesión ADK del usuario.
 2. Se revisa el mensaje con el detector de injection (solo alerta; no bloquea).
-3. El agente sigue la receta del prompt:
-   1. `buscar_normativa` para cualquier regla o derecho;
-   2. `consultar_empleado` / `calcular_prestaciones` si la pregunta es sobre la persona;
-   3. si no hay fundamento o el caso es particular, ofrece `crear_ticket_rrhh` y lo crea al
-      confirmar el usuario.
+3. El agente enruta según el tipo de pregunta (prompt v3):
+   1. "¿cuánto me toca?" (vacaciones, prima, aguinaldo) → `calcular_prestaciones`, que ya
+      trae el fundamento legal;
+   2. datos del expediente → `consultar_empleado`;
+   3. reglas o políticas generales → `buscar_normativa`;
+   4. si ninguna tool responde o el caso es particular, ofrece `crear_ticket_rrhh` y lo crea
+      al confirmar el usuario.
 4. Responde en español, breve, con cita `(Fuente, art. N)` y la fecha de referencia de los
    cálculos.
 5. El servicio arma la traza (tools, argumentos, resultados recortados), fuentes, alertas,

@@ -179,7 +179,7 @@ Respuesta de `/api/chat`:
   "traza": [{"tipo": "tool_llamada", "nombre": "calcular_prestaciones", "detalle": {"id_empleado": "", "concepto": "vacaciones"}}],
   "alertas": [],
   "latencia_ms": 2350, "tokens_entrada": 6120, "tokens_salida": 310,
-  "modelo": "groq/openai/gpt-oss-120b", "version_prompt": "agente_rrhh.v2"
+  "modelo": "groq/openai/gpt-oss-120b", "version_prompt": "agente_rrhh.v3"
 }
 ```
 
@@ -220,8 +220,8 @@ Con `FECHA_REFERENCIA=2026-11-24`. Las cifras salen de `calcular_prestaciones`, 
   Siguiente paso: un clasificador dedicado (p. ej. `gpt-oss-safeguard-20b`) y pruebas de
   red-teaming automatizadas.
 - **Un modelo open-weight puede elegir mal la tool o responder sin buscar.** En pruebas, gpt-oss-20b
-  inventó un salario en una pregunta de seguimiento; por eso el principal es el 120b y el prompt
-  v2 obliga a copiar los números de las tools. Siguiente paso: una
+  inventó un salario en una pregunta de seguimiento; por eso el principal es el 120b, el prompt
+  v2 obliga a copiar los números de las tools y el v3 enruta "¿cuánto me toca?" directo al cálculo. Siguiente paso: una
   evaluación end-to-end con jueces automáticos sobre los casos de esta tabla en CI.
 - **Sin streaming** de respuestas ni voz. ADK soporta streaming por SSE; sería lo siguiente
   para la interfaz.
