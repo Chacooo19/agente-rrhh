@@ -1,0 +1,20 @@
+{"pregunta": "¿Cuántos días de vacaciones me tocan si tengo tres años trabajando?", "esperados": ["lft-art76", "reglamento-interno-art5"]}
+{"pregunta": "¿De cuánto es la prima vacacional?", "esperados": ["lft-art80", "reglamento-interno-art6"]}
+{"pregunta": "¿Cuántos días de aguinaldo paga la empresa?", "esperados": ["reglamento-interno-art7", "lft-art87"]}
+{"pregunta": "¿Cuándo se paga el aguinaldo?", "esperados": ["reglamento-interno-art7", "lft-art87"]}
+{"pregunta": "¿Puedo trabajar desde casa?", "esperados": ["reglamento-interno-art8"]}
+{"pregunta": "¿Cuántos días de permiso me dan por paternidad?", "esperados": ["reglamento-interno-art9", "lft-art132"]}
+{"pregunta": "¿Cuánto dura la incapacidad por maternidad?", "esperados": ["lft-art170", "reglamento-interno-art10"]}
+{"pregunta": "¿Cómo se pagan las horas extra?", "esperados": ["reglamento-interno-art11", "lft-art66", "lft-art68"]}
+{"pregunta": "¿Cuántos retardos equivalen a una falta?", "esperados": ["reglamento-interno-art3"]}
+{"pregunta": "¿Cómo justifico una falta por enfermedad?", "esperados": ["reglamento-interno-art4"]}
+{"pregunta": "¿Cuál es el horario de trabajo?", "esperados": ["reglamento-interno-art2", "lft-art59", "lft-art61"]}
+{"pregunta": "¿Quién tiene derecho al bono de desempeño?", "esperados": ["politica-de-bonos-art1"]}
+{"pregunta": "¿Cuánto es el bono si mi evaluación es Supera?", "esperados": ["politica-de-bonos-art2"]}
+{"pregunta": "¿Qué dice el artículo 76 de la ley?", "esperados": ["lft-art76"]}
+{"pregunta": "¿Qué ropa debo usar en la oficina?", "esperados": ["reglamento-interno-art12"]}
+{"pregunta": "¿Cuál es la duración máxima de la jornada diurna según la ley?", "esperados": ["lft-art61"]}
+{"pregunta": "¿Cuántas horas a la semana es la jornada máxima?", "esperados": ["lft-art59", "reglamento-interno-art2"]}
+{"pregunta": "Dame una receta de chiles en nogada", "esperados": []}
+{"pregunta": "¿Cómo hago un for en Python?", "esperados": []}
+{"pregunta": "¿Quién ganó el mundial de futbol?", "esperados": []}
