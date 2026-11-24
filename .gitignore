@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+
+# Secretos y configuración local
+.env
+.env.*
+!.env.example
+
+# Datos generados en tiempo de ejecución
+data/index/*
+!data/index/.gitkeep
+data/*.db
+*.sqlite3
+
+# Caché de modelos de embeddings
+.cache/
+models_cache/
+
+# IDE / SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
