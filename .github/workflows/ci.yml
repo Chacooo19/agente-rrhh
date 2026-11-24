@@ -53,6 +53,7 @@ jobs:
         with:
           context: .
           push: ${{ startsWith(github.ref, 'refs/tags/v') }}
-          tags: ${{ env.IMAGEN }}:${{ github.ref_name }}
+          # En PRs la referencia es "N/merge" (no es una etiqueta válida): usamos una local.
+          tags: ${{ startsWith(github.ref, 'refs/tags/v') && format('{0}:{1}', env.IMAGEN, github.ref_name) || 'agente-rrhh:ci' }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
