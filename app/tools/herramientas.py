@@ -144,7 +144,9 @@ def calcular_prestaciones(
         "ok": True,
         "id_empleado": empleado.id_empleado,
         "nombre": empleado.nombre,
+        "salario_diario": empleado.salario_diario,
         "fecha_referencia": hoy.isoformat(),
+        "nota": "Usa estos números tal cual; no los recalcules.",
     }
     if concepto in ("vacaciones", "todas"):
         respuesta["vacaciones"] = vars(
