@@ -36,7 +36,7 @@ tickets. Todo debe levantarse con `docker compose up` sin servicios adicionales.
   `id` estable (`lft-art76`, `reglamento-interno-art7`) para citar y evaluar.
 - Al vectorizar se antepone `fuente + título` al texto, para que "aguinaldo de la empresa"
   encuentre el artículo del reglamento aunque el cuerpo no repita esas palabras.
-- **Búsqueda:** coseno exacto, top-k=5, **umbral mínimo** (`RAG_MIN_SCORE`, 0.35): por debajo
+- **Búsqueda:** coseno exacto, top-k=3 (cada fragmento recortado a 900 caracteres al enviarse al modelo), **umbral mínimo** (`RAG_MIN_SCORE`, 0.35): por debajo
   la tool responde `encontrado=false` y el agente dice que no sabe (RF-05). Si la pregunta
   menciona "artículo N", ese fragmento recibe un bono en el ranking.
 - **Seguridad en la ingesta:** se quitan comentarios HTML y se marcan fragmentos con
