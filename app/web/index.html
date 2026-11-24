@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alta · Asistente de RRHH</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <!-- Pantalla de inicio de sesión -->
+  <main id="vista-login" class="login">
+    <form id="form-login" class="tarjeta login__tarjeta" autocomplete="on">
+      <div class="marca"><span class="marca__logo">A</span><div><strong>Alta</strong><small>Asistente de RRHH · Grupo Altavista</small></div></div>
+      <label>Usuario<input id="usuario" name="usuario" placeholder="p. ej. e005" required /></label>
+      <label>Contraseña<input id="password" name="password" type="password" required /></label>
+      <button type="submit" id="btn-login">Entrar</button>
+      <p id="error-login" class="error" role="alert" hidden></p>
+      <details class="ayuda">
+        <summary>Cuentas de demostración (datos ficticios)</summary>
+        <p><code>e001</code>, <code>e002</code> → rol RRHH · <code>e003</code> a <code>e024</code> → empleados. Contraseña: la de <code>DEMO_PASSWORD</code> en tu <code>.env</code> (por defecto <code>demo1234</code>).</p>
+      </details>
+    </form>
+  </main>
+
+  <!-- Aplicación -->
+  <div id="vista-app" class="app" hidden>
+    <header class="barra">
+      <div class="marca"><span class="marca__logo">A</span><div><strong>Alta</strong><small>Asistente de RRHH</small></div></div>
+      <nav class="pestanas">
+        <button class="pestana activa" data-vista="chat">Chat</button>
+        <button class="pestana" data-vista="tickets" id="pestana-tickets" hidden>Tickets</button>
+      </nav>
+      <div class="usuario">
+        <span id="usuario-nombre"></span><span id="usuario-rol" class="etiqueta"></span>
+        <button id="btn-nueva" class="secundario" title="Iniciar una conversación nueva">Nueva conversación</button>
+        <button id="btn-salir" class="secundario">Salir</button>
+      </div>
+    </header>
+
+    <section id="panel-chat" class="contenido">
+      <div class="chat">
+        <div id="mensajes" class="mensajes" aria-live="polite"></div>
+        <div id="sugerencias" class="sugerencias"></div>
+        <form id="form-chat" class="entrada">
+          <textarea id="mensaje" rows="2" maxlength="2000" placeholder="Escribe tu pregunta sobre vacaciones, aguinaldo, permisos…" required></textarea>
+          <button type="submit" id="btn-enviar">Enviar</button>
+        </form>
+      </div>
+      <aside class="traza">
+        <h2>¿Cómo llegó a la respuesta?</h2>
+        <p class="tenue" id="traza-vacia">Aquí verás las herramientas que usó el agente, las fuentes que citó y cualquier alerta de seguridad.</p>
+        <div id="traza"></div>
+      </aside>
+    </section>
+
+    <section id="panel-tickets" class="contenido contenido--simple" hidden>
+      <div class="tarjeta">
+        <div class="tickets__cabecera"><h2>Tickets escalados a RRHH</h2><button id="btn-recargar" class="secundario">Actualizar</button></div>
+        <div id="tickets"></div>
+      </div>
+    </section>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
