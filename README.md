@@ -49,14 +49,14 @@ Decisiones (ADR): [`docs/adr/`](docs/adr/).
 
 ```mermaid
 flowchart LR
-    UI[Web] --> API[FastAPI + JWT] --> AG[Agente ADK] <--> LLM[gpt-oss-20b<br/>Groq u Ollama]
+    UI[Web] --> API[FastAPI + JWT] --> AG[Agente ADK] <--> LLM[gpt-oss-120b / 20b<br/>Groq u Ollama]
     AG --> RAG[(LFT + reglamento<br/>índice vectorial)]
     AG --> DB[(SQLite<br/>empleados · tickets)]
 ```
 
 | Pieza | Elección |
 |---|---|
-| Modelo | `openai/gpt-oss-20b` (open-weight, Apache 2.0) en Groq; o el mismo modelo local con Ollama. **Sin fine-tuning** ([ADR-0001](docs/adr/0001-modelo-open-source-sin-fine-tuning.md)) |
+| Modelo | `openai/gpt-oss-120b` (open-weight, Apache 2.0) en Groq, con `gpt-oss-20b` de respaldo; el 20b también corre local con Ollama. **Sin fine-tuning** ([ADR-0001](docs/adr/0001-modelo-open-source-sin-fine-tuning.md)) |
 | Framework | Google ADK + LiteLLM ([ADR-0002](docs/adr/0002-framework-google-adk.md)) |
 | Arquitectura | Un agente, 5 tools, permisos en código ([ADR-0003](docs/adr/0003-agente-unico-con-autorizacion-en-tools.md)) |
 | RAG | Chunking por artículo, FastEmbed multilingüe local, índice NumPy ([ADR-0004](docs/adr/0004-rag-y-almacenamiento.md)) |
@@ -82,14 +82,14 @@ cp .env.example .env              # PowerShell: Copy-Item .env.example .env
 | Variable | Obligatoria | Default | Para qué |
 |---|---|---|---|
 | `GROQ_API_KEY` | Sí, si usas Groq | — | Credencial del modelo |
-| `LLM_MODEL` | No | `groq/openai/gpt-oss-20b` | Modelo vía LiteLLM. Local: `ollama_chat/gpt-oss:20b` |
+| `LLM_MODEL` | No | `groq/openai/gpt-oss-120b` | Modelo vía LiteLLM. Local: `ollama_chat/gpt-oss:20b` |
 | `OLLAMA_API_BASE` | Solo con Ollama | — | `http://host.docker.internal:11434` (Docker) o `http://localhost:11434` |
 | `JWT_SECRET` | Recomendado | valor de desarrollo | Firma de tokens. `python -c "import secrets; print(secrets.token_urlsafe(32))"` |
 | `DEMO_PASSWORD` | No | `demo1234` | Contraseña de las cuentas ficticias |
 | `FECHA_REFERENCIA` | No | `2026-11-24` en la plantilla | Fecha para calcular antigüedad (vacía = hoy) |
 | `RAG_TOP_K` / `RAG_MIN_SCORE` | No | `3` / `0.35` | Fragmentos recuperados y umbral de "no sé" |
 | `LLM_TEMPERATURE` / `LLM_MAX_TOKENS` | No | `0.2` / `1024` | Parámetros del modelo |
-| `LLM_FALLBACK_MODEL` / `LLM_NUM_RETRIES` | No | `groq/openai/gpt-oss-120b` / `3` | Ante un 429, reintentos con espera y luego modelo de respaldo |
+| `LLM_FALLBACK_MODEL` / `LLM_NUM_RETRIES` | No | `groq/openai/gpt-oss-20b` / `3` | Ante un 429, reintentos con espera y luego modelo de respaldo |
 | `LLM_REASONING_EFFORT` | No | `low` | Esfuerzo de razonamiento de gpt-oss (menos tokens y latencia) |
 
 `.env` está en `.gitignore` y `.dockerignore`: ningún secreto se versiona ni entra a la imagen.
@@ -179,7 +179,7 @@ Respuesta de `/api/chat`:
   "traza": [{"tipo": "tool_llamada", "nombre": "calcular_prestaciones", "detalle": {"id_empleado": "", "concepto": "vacaciones"}}],
   "alertas": [],
   "latencia_ms": 2350, "tokens_entrada": 6120, "tokens_salida": 310,
-  "modelo": "groq/openai/gpt-oss-20b", "version_prompt": "agente_rrhh.v1"
+  "modelo": "groq/openai/gpt-oss-120b", "version_prompt": "agente_rrhh.v2"
 }
 ```
 
@@ -206,10 +206,10 @@ Con `FECHA_REFERENCIA=2026-11-24`. Las cifras salen de `calcular_prestaciones`, 
 
 ## 5. Limitaciones conocidas y qué haría con más tiempo
 
-- **Capa gratuita de Groq:** gpt-oss-20b tiene 8,000 tokens por minuto y 200,000 por día
+- **Capa gratuita de Groq:** gpt-oss-120b y gpt-oss-20b tienen cada uno 8,000 tokens por minuto y 200,000 por día
   ([límites oficiales](https://console.groq.com/docs/rate-limits)), y un turno con tools usa
   varias llamadas al modelo. Mitigación: fragmentos recortados, top-k=3, razonamiento
-  `low`, reintentos con espera y respaldo en gpt-oss-120b (sus límites son independientes).
+  `low`, reintentos con espera y respaldo en el otro modelo (sus límites son independientes).
   Para uso continuo, el plan Developer de Groq (pago por uso) o Ollama local.
 - **Sesiones en memoria:** se pierden al reiniciar. Siguiente paso: `DatabaseSessionService`
   de ADK sobre Postgres.
@@ -219,7 +219,9 @@ Con `FECHA_REFERENCIA=2026-11-24`. Las cifras salen de `calcular_prestaciones`, 
   otros idiomas. Por eso no es la única capa: la autorización en código es la barrera dura.
   Siguiente paso: un clasificador dedicado (p. ej. `gpt-oss-safeguard-20b`) y pruebas de
   red-teaming automatizadas.
-- **El modelo de 20B a veces elige mal la tool o responde sin buscar.** Siguiente paso: una
+- **Un modelo open-weight puede elegir mal la tool o responder sin buscar.** En pruebas, gpt-oss-20b
+  inventó un salario en una pregunta de seguimiento; por eso el principal es el 120b y el prompt
+  v2 obliga a copiar los números de las tools. Siguiente paso: una
   evaluación end-to-end con jueces automáticos sobre los casos de esta tabla en CI.
 - **Sin streaming** de respuestas ni voz. ADK soporta streaming por SSE; sería lo siguiente
   para la interfaz.
@@ -239,7 +241,7 @@ responder):
 |---|---|
 | Tokens de entrada | ~6,000–10,000 (prompt ~900 + esquemas de tools ~800 + historial + fragmentos recuperados) |
 | Tokens de salida | ~300–800 (incluye razonamiento del modelo) |
-| **Costo con Groq** (gpt-oss-20b: USD 0.075 / 1M entrada, 0.30 / 1M salida) | **≈ USD 0.001 por consulta** (~1,000 consultas por USD 1). **USD 0 en la capa gratuita.** |
+| **Costo con Groq** (gpt-oss-120b: USD 0.15 / 1M entrada, 0.60 / 1M salida) | **≈ USD 0.002 por consulta** (~500 consultas por USD 1); con el 20b, la mitad. **USD 0 en la capa gratuita.** |
 | Costo con Ollama local | USD 0 (hardware propio) |
 | Embeddings y búsqueda | Locales: ~10–30 ms, sin costo |
 | **Latencia total con Groq** | **~2–5 s** por turno con tools |

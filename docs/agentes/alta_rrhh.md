@@ -24,17 +24,17 @@ Trabajo y el reglamento interno, y calcula sus prestaciones con sus propios dato
 | Parámetro | Valor | Por qué |
 |---|---|---|
 | Proveedor | Groq vía LiteLLM (alternativa: Ollama local) | Latencia baja y capa gratuita; mismo modelo en local para privacidad (ADR-0001) |
-| Modelo | `openai/gpt-oss-20b` | Open-weight Apache 2.0, entrenado para uso agéntico y tool calling |
+| Modelo | `openai/gpt-oss-120b` (respaldo: `gpt-oss-20b`) | Open-weight Apache 2.0, entrenado para uso agéntico; el 120b sigue mejor la regla de no inventar números (ADR-0001, revisión) |
 | Temperatura | 0.2 | Respuestas consistentes sobre normativa; poca variación entre ejecuciones |
 | Máx. tokens de salida | 1024 | Las respuestas son breves; el margen cubre el razonamiento interno del modelo |
 | Razonamiento | `reasoning_effort=low` | Menos tokens y latencia; las cuentas difíciles las hace el código |
-| Reintentos / respaldo | 3 reintentos, luego `gpt-oss-120b` | Tolerar el límite de 8K tokens/min de la capa gratuita de Groq |
+| Reintentos / respaldo | 3 reintentos, luego `gpt-oss-20b` | Tolerar el límite de 8K tokens/min de la capa gratuita de Groq |
 | Framework | Google ADK 2.x (`LlmAgent`) | Tools, sesiones y eventos para la traza (ADR-0002) |
 
 ## Prompt
 
-- Archivo: [`prompts/agente_rrhh.v1.md`](../../prompts/agente_rrhh.v1.md)
-- Versión: **v1** (`VERSION_PROMPT = "agente_rrhh.v1"` en `app/agent/agente.py`; viaja en la
+- Archivo: [`prompts/agente_rrhh.v2.md`](../../prompts/agente_rrhh.v2.md) (v1 se conserva para comparar)
+- Versión: **v2** (`VERSION_PROMPT = "agente_rrhh.v2"` en `app/agent/agente.py`; viaja en la
   traza y en los logs de cada turno).
 - Notas de diseño y cómo se prueba: [`prompts/README.md`](../../prompts/README.md)
 
