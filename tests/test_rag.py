@@ -99,3 +99,9 @@ def test_fragmento_con_injection_visible_se_neutraliza(recuperador: Recuperador)
 def test_sin_resultados_por_debajo_del_umbral(recuperador: Recuperador) -> None:
     recuperador.min_score = 0.99
     assert recuperador.buscar("receta de chiles en nogada") == []
+
+
+def test_bono_lexico_prioriza_el_articulo_con_la_palabra_clave(recuperador: Recuperador) -> None:
+    recuperador.min_score = 0.0
+    resultados = recuperador.buscar("¿Cuánto me toca de aguinaldo este año?")
+    assert resultados[0].id == "reglamento-interno-art7"
