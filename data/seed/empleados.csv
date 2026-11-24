@@ -1,0 +1,25 @@
+id_empleado,nombre,area,puesto,fecha_ingreso,salario_diario,dias_vacaciones_tomados
+E001,Daniela Herrera Cruz,Recursos Humanos,Gerente de RRHH,2024-07-30,1539.16,4
+E002,Miguel Acosta Vargas,Recursos Humanos,Analista de nómina,2026-01-13,918.04,0
+E003,Ricardo Morales Acosta,Operaciones,Auxiliar de almacén,2024-07-22,432.50,8
+E004,Héctor Castillo Salinas,Tecnología,Soporte técnico,2017-08-29,634.68,4
+E005,Andrés Fuentes Ramírez,Operaciones,Montacarguista,2021-07-21,529.52,0
+E006,Regina Castillo Salinas,Ventas,Gerente comercial,2023-05-25,1674.28,3
+E007,Jorge Acosta Fuentes,Finanzas,Auxiliar contable,2014-01-13,535.82,4
+E008,Raúl Fuentes Ibarra,Finanzas,Auxiliar contable,2022-01-17,524.61,4
+E009,Ana Torres Vargas,Finanzas,Auxiliar contable,2008-07-26,548.38,7
+E010,Ricardo Ortega Navarro,Ventas,Gerente comercial,2016-02-15,1683.61,7
+E011,Andrés Torres Delgado,Operaciones,Auxiliar de almacén,2016-04-28,476.01,1
+E012,Lucía Navarro Acosta,Operaciones,Supervisor de almacén,2004-11-23,786.72,7
+E013,María Navarro Fuentes,Operaciones,Auxiliar de almacén,2024-06-03,415.35,6
+E014,Sofía Acosta Ramírez,Tecnología,Desarrollador,2026-08-02,1144.27,0
+E015,Raúl Herrera Ortega,Operaciones,Supervisor de almacén,2023-11-18,816.40,8
+E016,Fernanda Morales Vargas,Finanzas,Contador,2019-07-24,1028.77,7
+E017,Sofía Rojas Fuentes,Operaciones,Montacarguista,2023-08-25,547.99,8
+E018,Miguel Herrera Salinas,Finanzas,Contador,2005-08-14,928.22,4
+E019,Regina Salinas Ibarra,Tecnología,Desarrollador,2014-12-04,1222.52,6
+E020,Ana Castillo Ibarra,Ventas,Ejecutivo de ventas,2025-06-09,725.89,5
+E021,Ana Ramírez Fuentes,Finanzas,Auxiliar contable,2011-04-11,525.58,5
+E022,Jorge Fuentes Acosta,Tecnología,Desarrollador,2023-02-20,1175.08,3
+E023,Andrés Cruz Acosta,Tecnología,Desarrollador,2011-05-16,1201.39,8
+E024,Daniela Torres Ortega,Tecnología,Desarrollador,2025-07-29,1187.61,0
