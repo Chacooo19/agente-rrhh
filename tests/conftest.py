@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -10,8 +12,20 @@ from app.data.db import BaseDatos
 from app.rag.embeddings import HashEmbedder
 from app.rag.ingest import construir_indice
 from app.rag.retriever import Recuperador
+from app.tools.contexto import CLAVE_ID_EMPLEADO, CLAVE_ROL, Dependencias, configurar_dependencias
 
 FECHA_PRUEBAS = date(2026, 11, 24)
+
+
+@dataclass
+class ContextoFalso:
+    """Sustituye a ToolContext de ADK: solo necesitamos el estado de la sesión."""
+
+    state: dict[str, Any] = field(default_factory=dict)
+
+
+def contexto(id_empleado: str, rol: str = "empleado") -> ContextoFalso:
+    return ContextoFalso(state={CLAVE_ID_EMPLEADO: id_empleado, CLAVE_ROL: rol})
 
 
 @pytest.fixture
@@ -45,3 +59,10 @@ def recuperador(ajustes: Settings, tmp_path: Path) -> Recuperador:
         )
     indice = construir_indice(data, HashEmbedder())
     return Recuperador(indice, HashEmbedder(), top_k=3, min_score=0.05)
+
+
+@pytest.fixture
+def dependencias(db: BaseDatos, recuperador: Recuperador, ajustes: Settings) -> Dependencias:
+    deps = Dependencias(db=db, recuperador=recuperador, ajustes=ajustes)
+    configurar_dependencias(deps)
+    return deps
