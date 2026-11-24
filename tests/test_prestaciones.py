@@ -49,6 +49,7 @@ def test_aguinaldo_anio_completo_es_20_dias_de_empresa_y_15_de_ley() -> None:
     r = p.calcular_aguinaldo(date(2015, 3, 3), date(2026, 11, 24), salario_diario=1000.0)
     assert r.dias_trabajados_en_anio == 365
     assert r.monto_empresa == pytest.approx(20_000.0)
+    assert r.dias_minimo_ley == pytest.approx(15.0)
     assert r.monto_minimo_ley == pytest.approx(15_000.0)
 
 

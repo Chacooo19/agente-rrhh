@@ -52,6 +52,7 @@ class ResultadoAguinaldo:
     dias_trabajados_en_anio: int
     dias_aguinaldo_empresa: float
     monto_empresa: float
+    dias_minimo_ley: float
     monto_minimo_ley: float
     fundamento: str
 
@@ -89,6 +90,7 @@ def calcular_aguinaldo(ingreso: date, hoy: date, salario_diario: float) -> Resul
         dias_trabajados_en_anio=trabajados,
         dias_aguinaldo_empresa=dias_empresa,
         monto_empresa=round(dias_empresa * salario_diario, 2),
+        dias_minimo_ley=round(DIAS_AGUINALDO_LEY * proporcion, 2),
         monto_minimo_ley=round(DIAS_AGUINALDO_LEY * proporcion * salario_diario, 2),
         fundamento=(
             "LFT art. 87 (mínimo 15 días, proporcional si no se completó el año); "

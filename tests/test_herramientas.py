@@ -44,7 +44,7 @@ def test_sin_sesion_autenticada_no_hay_datos(dependencias: Dependencias) -> None
 def test_calcular_prestaciones_respeta_permisos(dependencias: Dependencias) -> None:
     propio = calcular_prestaciones("", "todas", contexto("E009"))  # type: ignore[arg-type]
     assert propio["ok"]
-    assert {"vacaciones", "aguinaldo"} <= propio.keys()
+    assert {"vacaciones", "aguinaldo", "salario_diario"} <= propio.keys()
     ajeno = calcular_prestaciones("E004", "vacaciones", contexto("E009"))  # type: ignore[arg-type]
     assert ajeno["error"] == "no_autorizado"
 

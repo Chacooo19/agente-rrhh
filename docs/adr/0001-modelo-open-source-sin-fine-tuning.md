@@ -1,6 +1,6 @@
 # ADR-0001: Modelo open-weight (gpt-oss-20b) sin fine-tuning, servido por Groq u Ollama
 
-- **Estado:** aceptado
+- **Estado:** aceptado, revisado el mismo día tras pruebas (ver al final)
 - **Fecha:** 2026-11-24
 
 ## Contexto
@@ -57,3 +57,20 @@ razonamiento). Ante un 429, LiteLLM reintenta con espera exponencial y después 
 - ⚠️ La capa gratuita de Groq limita gpt-oss-20b a 8K tokens por minuto y 200K por día, lo
   que alcanza para pocos turnos seguidos. Si aun con reintentos y respaldo se agota, la API
   devuelve un 503 con un mensaje claro. Para uso continuo: plan Developer de Groq u Ollama.
+
+## Revisión (2026-11-24, tras pruebas con el modelo real)
+
+**Qué pasó:** con `gpt-oss-20b`, ante el seguimiento "¿y si fuera solo lo que pide la ley?",
+el modelo respondió con un salario inventado ("suponiendo un salario anual de $158,000") en
+lugar del campo `monto_minimo_ley` que la tool ya había devuelto. Además, la capa gratuita
+(8K tokens por minuto por modelo) se agotaba desde la segunda pregunta.
+
+**Cambio:**
+- Modelo principal: **`gpt-oss-120b`** (mismo licenciamiento open-weight, mejor apego a
+  instrucciones). `gpt-oss-20b` queda como **respaldo** automático ante un 429; como Groq
+  limita por modelo, tener dos duplica el margen.
+- Prompt v2: los números se copian de las tools, nunca se suponen (ver `prompts/README.md`).
+- Menos tokens por llamada: top-k 3, fragmentos recortados y `reasoning_effort=low`.
+
+**Consecuencia:** el costo sube a ≈ USD 0.002 por consulta en tarifa de pago (sigue en USD 0
+en la capa gratuita). En local con Ollama se usa el 20b, porque el 120b necesita ~65 GB de memoria.

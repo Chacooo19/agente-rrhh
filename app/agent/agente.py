@@ -11,7 +11,7 @@ from app.tools.herramientas import HERRAMIENTAS
 
 NOMBRE_APP = "agente_rrhh"
 NOMBRE_AGENTE = "alta_rrhh"
-VERSION_PROMPT = "agente_rrhh.v1"
+VERSION_PROMPT = "agente_rrhh.v2"
 
 
 def cargar_prompt(ajustes: Settings, version: str = VERSION_PROMPT) -> str:

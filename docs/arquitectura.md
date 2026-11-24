@@ -8,7 +8,7 @@ flowchart LR
     UI -->|"POST /api/login<br/>POST /api/chat (Bearer JWT)"| API["Backend FastAPI<br/>auth · validación · errores"]
     API -->|"identidad del token<br/>→ estado de sesión"| SVC["ServicioAgente<br/>sesiones ADK · traza · métricas"]
     SVC --> AG["Agente 'Alta'<br/>Google ADK (LlmAgent)<br/>prompt v1"]
-    AG <-->|"LiteLLM"| LLM["gpt-oss-20b<br/>Groq (por defecto)<br/>u Ollama local"]
+    AG <-->|"LiteLLM"| LLM["gpt-oss-120b (respaldo: 20b)<br/>Groq (por defecto)<br/>u Ollama local"]
     AG --> T1["buscar_normativa"]
     AG --> T2["consultar_empleado"]
     AG --> T3["calcular_prestaciones"]
@@ -36,7 +36,7 @@ sequenceDiagram
     participant A as FastAPI
     participant S as ServicioAgente
     participant G as Agente ADK
-    participant M as Modelo (gpt-oss-20b)
+    participant M as Modelo (gpt-oss-120b)
     participant T as Tools
     N->>A: POST /api/chat {mensaje, session_id} + JWT
     A->>A: valida JWT → usuario, rol, id_empleado
@@ -62,7 +62,7 @@ sequenceDiagram
 
 | Decisión | Elección | ADR |
 |---|---|---|
-| Modelo | gpt-oss-20b (open-weight, Apache 2.0) vía Groq; Ollama como alternativa local | [0001](adr/0001-modelo-open-source-sin-fine-tuning.md) |
+| Modelo | gpt-oss-120b con respaldo gpt-oss-20b (open-weight, Apache 2.0) vía Groq; Ollama como alternativa local | [0001](adr/0001-modelo-open-source-sin-fine-tuning.md) |
 | Framework | Google ADK con LiteLLM | [0002](adr/0002-framework-google-adk.md) |
 | Arquitectura | Un solo agente con 5 tools; autorización en el código de las tools | [0003](adr/0003-agente-unico-con-autorizacion-en-tools.md) |
 | Datos y RAG | Chunking por artículo, FastEmbed local, índice NumPy, SQLite | [0004](adr/0004-rag-y-almacenamiento.md) |

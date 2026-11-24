@@ -16,8 +16,13 @@ def _evento(*partes: types.Part) -> Event:
 class EjecutorSimulado:
     """Reproduce lo que haría el Runner de ADK: llama una tool y luego responde."""
 
-    def __init__(self, falla: Exception | None = None) -> None:
+    def __init__(
+        self,
+        falla: Exception | None = None,
+        texto: str = "Te corresponden 20 días (Reglamento interno, art. 7).",
+    ) -> None:
         self.falla = falla
+        self.texto = texto
         self.llamadas: list[dict[str, Any]] = []
 
     async def run_async(self, **kwargs: Any) -> AsyncIterator[Event]:
@@ -60,4 +65,4 @@ class EjecutorSimulado:
                 )
             )
         )
-        yield _evento(types.Part(text="Te corresponden 20 días (Reglamento interno, art. 7)."))
+        yield _evento(types.Part(text=self.texto))
