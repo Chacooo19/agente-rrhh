@@ -222,7 +222,10 @@ def _mensaje_error_modelo(error: Exception) -> str:
     if "Authentication" in nombre or "api_key" in str(error).lower():
         return "No hay una API key válida para el modelo. Revisa GROQ_API_KEY en tu .env."
     if "RateLimit" in nombre:
-        return "Se alcanzó el límite de uso del proveedor del modelo. Intenta en un minuto."
+        return (
+            "Se alcanzó el límite de tokens por minuto del proveedor del modelo (en la capa "
+            "gratuita de Groq son 8,000 por minuto). Espera un minuto e intenta de nuevo."
+        )
     if "Connection" in nombre or "Timeout" in nombre:
         return "No se pudo conectar con el proveedor del modelo. Revisa tu conexión."
     return "El modelo no está disponible en este momento. Intenta de nuevo."
