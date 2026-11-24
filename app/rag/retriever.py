@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import unicodedata
 from dataclasses import dataclass
 from typing import Any
 
@@ -13,6 +14,47 @@ from app.rag.store import IndiceVectorial
 _MENCION_ARTICULO = re.compile(r"art[íi]culo\s+(\d+(?:\s*bis)?)", re.IGNORECASE)
 FUENTES_VALIDAS = {"todas", "LFT", "Reglamento interno", "Política de bonos"}
 BONO_MENCION_EXPLICITA = 0.25
+# Búsqueda híbrida ligera: el embedding pequeño a veces no prioriza el artículo que contiene
+# literalmente la palabra clave ("aguinaldo"); sumamos un bono proporcional a los términos
+# de la consulta que aparecen en el fragmento.
+BONO_LEXICO = 0.15
+_PALABRAS_VACIAS = {
+    "cuanto",
+    "cuantos",
+    "cuantas",
+    "donde",
+    "cuando",
+    "puedo",
+    "tengo",
+    "quiero",
+    "sobre",
+    "segun",
+    "entre",
+    "desde",
+    "hasta",
+    "porque",
+    "tiene",
+    "tienen",
+    "toca",
+    "esta",
+    "este",
+    "estos",
+    "estas",
+    "dice",
+    "hacer",
+    "debo",
+    "pueden",
+    "puede",
+}
+
+
+def _sin_acentos(texto: str) -> str:
+    return unicodedata.normalize("NFKD", texto).encode("ascii", "ignore").decode().lower()
+
+
+def _terminos(consulta: str) -> set[str]:
+    palabras = re.findall(r"[a-z0-9]+", _sin_acentos(consulta))
+    return {p for p in palabras if len(p) >= 5 and p not in _PALABRAS_VACIAS}
 
 
 @dataclass
@@ -47,12 +89,16 @@ class Recuperador:
         self.embedder = embedder
         self.top_k = top_k
         self.min_score = min_score
+        self._textos_normalizados = {
+            f.id: _sin_acentos(f"{f.titulo} {f.texto}") for f in indice.fragmentos
+        }
 
     def buscar(self, consulta: str, fuente: str = "todas") -> list[Resultado]:
         """Devuelve los fragmentos relevantes con puntaje >= umbral, ya saneados."""
         vector = self.embedder.embed([consulta])[0]
         # Pedimos más candidatos de los necesarios para poder filtrar por fuente
         candidatos = self.indice.buscar(vector, k=self.top_k * 6)
+        terminos = _terminos(consulta)
         articulos_mencionados = {
             m.group(1).replace(" ", "").lower() for m in _MENCION_ARTICULO.finditer(consulta)
         }
@@ -63,6 +109,10 @@ class Recuperador:
             # Si el usuario cita un artículo explícito, ese fragmento sube en el ranking
             if frag.articulo.replace(" ", "").lower() in articulos_mencionados:
                 puntaje += BONO_MENCION_EXPLICITA
+            if terminos:
+                texto = self._textos_normalizados.get(frag.id, "")
+                aciertos = sum(t in texto for t in terminos)
+                puntaje += BONO_LEXICO * aciertos / len(terminos)
             if puntaje < self.min_score:
                 continue
             resultados.append(
